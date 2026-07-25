@@ -1,0 +1,51 @@
+# This .gitignore file should be placed at the root of your Unity project directory
+# Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
+
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+.utmp/
+
+# MemoryCaptures can get excessive in size
+/[Mm]emoryCaptures/
+
+# Asset risk profiles
+/[Aa]sset[Cc]heck/
+
+# Generated WebGL files
+/[Aa]ss_Web[Cc]ache/
+
+# Exported visual studio project build cavities
+/*.csproj
+/*.unityproj
+/*.sln
+/*.suo
+/*.tmp
+/*.user
+/*.userprefs
+/*.pidb
+/*.booproj
+/*.svd
+/*.pdb
+/*.opendb
+/*.VC.db
+
+# Unity3D generated meta files
+/*.pidb.meta
+/*.pdb.meta
+/*.msc
+
+# Unity3D generated file redirects
+/*.apk
+/*.unitypackage
+/*.bundle
+
+# Crashlytics generated file
+crashlytics-build.properties
+
+# Packed mods
+*.acespace

@@ -1,1 +1,0 @@
-# medtriage_simulation
