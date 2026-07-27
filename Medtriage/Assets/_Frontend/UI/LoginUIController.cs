@@ -19,7 +19,9 @@ namespace Medtriage.Frontend.UI
  
         [Header("Buttons")]
         [SerializeField] private Button loginButton;
-        [SerializeField] private Button goToRegistrationButton;
+        
+        [SerializeField] private Button continueAsTraineeButton;
+[SerializeField] private Button goToRegistrationButton;
  
         [Header("Feedback")]
         [SerializeField] private TMP_Text statusLabel;
@@ -28,10 +30,12 @@ namespace Medtriage.Frontend.UI
         [Header("Navigation")]
         [SerializeField] private string registrationSceneName = "Registration";
  
-        private void Awake()
+private void Awake()
         {
             loginButton.onClick.AddListener(HandleLoginClicked);
             goToRegistrationButton.onClick.AddListener(HandleGoToRegistrationClicked);
+            if (continueAsTraineeButton != null)
+                continueAsTraineeButton.onClick.AddListener(HandleContinueAsTraineeClicked);
             SetBusy(false);
             SetStatus(string.Empty);
         }
@@ -61,10 +65,12 @@ namespace Medtriage.Frontend.UI
             SceneManager.LoadScene(registrationSceneName);
         }
  
-        private void SetBusy(bool busy)
+private void SetBusy(bool busy)
         {
             loginButton.interactable = !busy;
             goToRegistrationButton.interactable = !busy;
+            if (continueAsTraineeButton != null)
+                continueAsTraineeButton.interactable = !busy;
             if (loadingSpinner != null) loadingSpinner.SetActive(busy);
         }
  
@@ -72,5 +78,15 @@ namespace Medtriage.Frontend.UI
         {
             if (statusLabel != null) statusLabel.text = message;
         }
-    }
+    
+
+private async void HandleContinueAsTraineeClicked()
+        {
+            SetBusy(true);
+            SetStatus("Creating your trainee session...");
+            var result = await AuthManager.SignInAnonymouslyAsync();
+            SetBusy(false);
+            SetStatus(result.Success ? string.Empty : result.ErrorMessage);
+        }
+}
 }

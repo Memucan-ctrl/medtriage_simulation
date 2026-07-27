@@ -1,4 +1,7 @@
 using UnityEngine;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 using Medtriage.Shared.Data;
 using Medtriage.Shared.Managers;
  
@@ -15,27 +18,74 @@ namespace Medtriage.Frontend.UI
         [SerializeField] private TaskTileButton tilePrefab;
         [SerializeField] private Transform gridParent;
  
-        private async void Start()
+private async void Start()
         {
-            var completedTaskIds = await CloudSaveManager.LoadCompletedTaskIdsAsync();
+            List<string> completedTaskIds = new List<string>();
+
+            try
+            {
+                completedTaskIds = await CloudSaveManager.LoadCompletedTaskIdsAsync()
+                    ?? new List<string>();
+            }
+            catch (Exception exception)
+            {
+                Debug.LogWarning($"[MainMenu] Progress could not be loaded; scenarios remain available. {exception.Message}");
+            }
+
             BuildGrid(completedTaskIds);
         }
  
-        private void BuildGrid(System.Collections.Generic.List<string> completedTaskIds)
+private void BuildGrid(List<string> completedTaskIds)
         {
+            if (gridParent == null || tilePrefab == null || taskCatalog == null)
+            {
+                Debug.LogError("[MainMenu] Scenario grid references are incomplete.");
+                return;
+            }
+
             foreach (Transform child in gridParent)
                 Destroy(child.gameObject);
- 
-            foreach (var entry in taskCatalog.Tasks)
+
+            if (taskCatalog.Tasks == null || taskCatalog.Tasks.Count == 0)
             {
-                var tile = Instantiate(tilePrefab, gridParent);
+                Debug.LogWarning("[MainMenu] The Task Catalog has no scenarios yet.");
+                return;
+            }
+
+            foreach (TaskCatalogEntry entry in taskCatalog.Tasks)
+            {
+                if (entry == null || string.IsNullOrWhiteSpace(entry.TaskId))
+                    continue;
+
+                TaskTileButton tile = Instantiate(tilePrefab, gridParent);
                 bool isCompleted = completedTaskIds.Contains(entry.TaskId);
-                tile.Setup(entry, isCompleted, OnTaskSelected);
+                bool isAvailable = !string.IsNullOrWhiteSpace(entry.SceneName)
+                    && Application.CanStreamedLevelBeLoaded(entry.SceneName);
+
+                tile.Setup(entry, isCompleted, isAvailable, OnTaskSelected);
             }
         }
  
-        private void OnTaskSelected(TaskCatalogEntry entry)
+private void OnTaskSelected(TaskCatalogEntry entry)
         {
+            if (entry == null || string.IsNullOrWhiteSpace(entry.SceneName))
+            {
+                Debug.LogWarning("[MainMenu] This scenario has no simulation scene assigned.");
+                return;
+            }
+
+            if (!Application.CanStreamedLevelBeLoaded(entry.SceneName))
+            {
+                Debug.LogWarning($"[MainMenu] Scenario '{entry.DisplayName}' is waiting for scene '{entry.SceneName}' to be added to Build Settings.");
+                return;
+            }
+
+            if (SessionManager.Instance == null)
+            {
+                Debug.LogWarning("[MainMenu] SessionManager is unavailable. Start the application from Bootstrap.");
+                return;
+            }
+
             SessionManager.Instance.LoadTask(entry.TaskId, entry.SceneName);
         }
     }

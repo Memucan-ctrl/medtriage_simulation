@@ -1,4 +1,8 @@
 using UnityEngine;
+
+using System.Threading.Tasks;
+using Medtriage.Shared.Managers;
+using Medtriage.Frontend.UI;
 using UnityEngine.SceneManagement;
  
 namespace Medtriage.Frontend.Auth
@@ -12,13 +16,28 @@ namespace Medtriage.Frontend.Auth
     public class AppBootstrapper : MonoBehaviour
     {
         [SerializeField] private string loginSceneName = "Login";
-        [SerializeField] private string mainMenuSceneName = "MainMenu";
+        
+        [SerializeField] private SplashPresenter splashPresenter;
+[SerializeField] private string mainMenuSceneName = "MainMenu";
  
-        private async void Start()
+private async void Start()
         {
+            splashPresenter?.SetStatus("Initializing secure services...");
+            Task introTask = splashPresenter != null
+                ? splashPresenter.PlayIntroAsync()
+                : Task.CompletedTask;
+
             await AuthManager.InitializeServicesAsync();
+            splashPresenter?.SetStatus("Restoring trainee session...");
+
             bool resumed = await AuthManager.TryResumeSessionAsync();
-            SceneManager.LoadScene(resumed ? mainMenuSceneName : loginSceneName);
+            splashPresenter?.SetStatus(resumed ? "Preparing your dashboard..." : "Ready to begin...");
+            await introTask;
+
+            if (resumed)
+                SessionManager.Instance?.OnLoginSuccess(AuthManager.CurrentPlayerId);
+            else
+                SceneManager.LoadScene(loginSceneName);
         }
     }
 }

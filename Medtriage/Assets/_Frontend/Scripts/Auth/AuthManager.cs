@@ -16,7 +16,9 @@ namespace Medtriage.Frontend.Auth
     /// </summary>
     public static class AuthManager
     {
-        public static bool ServicesInitialized { get; private set; }
+        
+        public static string CurrentPlayerId => AuthenticationService.Instance.PlayerId;
+public static bool ServicesInitialized { get; private set; }
  
         /// <summary>Call once, early (AppBootstrapper does this), before any sign-in call.</summary>
         public static async Task InitializeServicesAsync()
@@ -34,13 +36,26 @@ namespace Medtriage.Frontend.Auth
             }
         }
  
-        public static async Task<AuthResult> SignUpAsync(string username, string password)
+public static async Task<AuthResult> SignUpAsync(string username, string password)
         {
             await InitializeServicesAsync();
- 
+
+            if (!ServicesInitialized)
+                return AuthResult.Fail("Unity Services could not be initialized. Check your connection and try again.");
+
             try
             {
-                await AuthenticationService.Instance.SignUpWithUsernamePasswordAsync(username, password);
+                if (AuthenticationService.Instance.IsSignedIn)
+                {
+                    // A trainee may already own an anonymous account. Add credentials to
+                    // that same player so Cloud Save progress and the Player ID are preserved.
+                    await AuthenticationService.Instance.AddUsernamePasswordAsync(username, password);
+                }
+                else
+                {
+                    await AuthenticationService.Instance.SignUpWithUsernamePasswordAsync(username, password);
+                }
+
                 SessionManager.Instance?.OnLoginSuccess(AuthenticationService.Instance.PlayerId);
                 return AuthResult.Ok();
             }
@@ -54,12 +69,21 @@ namespace Medtriage.Frontend.Auth
             }
         }
  
-        public static async Task<AuthResult> SignInAsync(string username, string password)
+public static async Task<AuthResult> SignInAsync(string username, string password)
         {
             await InitializeServicesAsync();
- 
+
+            if (!ServicesInitialized)
+                return AuthResult.Fail("Unity Services could not be initialized. Check your connection and try again.");
+
             try
             {
+                // Unity Authentication does not allow a second sign-in while an
+                // anonymous/cached player is active. Explicitly leave that session
+                // before signing in to the requested linked account.
+                if (AuthenticationService.Instance.IsSignedIn)
+                    AuthenticationService.Instance.SignOut(true);
+
                 await AuthenticationService.Instance.SignInWithUsernamePasswordAsync(username, password);
                 SessionManager.Instance?.OnLoginSuccess(AuthenticationService.Instance.PlayerId);
                 return AuthResult.Ok();
@@ -80,17 +104,22 @@ namespace Medtriage.Frontend.Auth
         /// showing the login screen again. Returns false if there is nothing to
         /// resume, in which case the caller should route to the Login scene.
         /// </summary>
-        public static async Task<bool> TryResumeSessionAsync()
+public static async Task<bool> TryResumeSessionAsync()
         {
             await InitializeServicesAsync();
- 
+
+            if (!ServicesInitialized)
+                return false;
+
+            if (AuthenticationService.Instance.IsSignedIn)
+                return true;
+
             if (!AuthenticationService.Instance.SessionTokenExists)
                 return false;
- 
+
             try
             {
                 await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                SessionManager.Instance?.OnLoginSuccess(AuthenticationService.Instance.PlayerId);
                 return true;
             }
             catch (Exception e)
@@ -100,27 +129,64 @@ namespace Medtriage.Frontend.Auth
             }
         }
  
-        public static void SignOut()
+public static void SignOut()
         {
-            if (AuthenticationService.Instance.IsSignedIn)
-                AuthenticationService.Instance.SignOut();
- 
+            if (ServicesInitialized && AuthenticationService.Instance.IsSignedIn)
+                AuthenticationService.Instance.SignOut(true);
+
             SessionManager.Instance?.SignOut();
         }
  
-        private static string FriendlyMessage(Exception e)
+private static string FriendlyMessage(Exception e)
         {
-            var message = e.Message ?? "Something went wrong. Please try again.";
+            string message = e.Message ?? "Something went wrong. Please try again.";
             Debug.LogWarning($"[AuthManager] {message}");
- 
-            if (message.Contains("Invalid"))
-                return "That username or password isn't right. Please try again.";
-            if (message.Contains("already"))
-                return "That username is already taken. Try signing in instead.";
- 
-            return "We couldn't reach the login service. Check your connection and try again.";
+            string lower = message.ToLowerInvariant();
+
+            if (lower.Contains("username") && (lower.Contains("taken") || lower.Contains("already")))
+                return "That username is already linked to an account. Try signing in instead.";
+            if (lower.Contains("invalid") || lower.Contains("password") && lower.Contains("incorrect"))
+                return "That username or password isn't correct. Please try again.";
+            if (lower.Contains("provider") || lower.Contains("configuration") || lower.Contains("disabled"))
+                return "Username and password authentication is not enabled for this Unity project.";
+            if (lower.Contains("already signed in"))
+                return "A trainee session is already active. Please try again.";
+            if (lower.Contains("network") || lower.Contains("timeout") || lower.Contains("reach"))
+                return "We couldn't reach the authentication service. Check your connection and try again.";
+
+            return message;
         }
-    }
+    
+
+public static async Task<AuthResult> SignInAnonymouslyAsync()
+        {
+            await InitializeServicesAsync();
+
+            if (!ServicesInitialized)
+                return AuthResult.Fail("Unity Services could not be initialized. Check your connection and try again.");
+
+            if (AuthenticationService.Instance.IsSignedIn)
+            {
+                SessionManager.Instance?.OnLoginSuccess(AuthenticationService.Instance.PlayerId);
+                return AuthResult.Ok();
+            }
+
+            try
+            {
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                SessionManager.Instance?.OnLoginSuccess(AuthenticationService.Instance.PlayerId);
+                return AuthResult.Ok();
+            }
+            catch (AuthenticationException e)
+            {
+                return AuthResult.Fail(FriendlyMessage(e));
+            }
+            catch (RequestFailedException e)
+            {
+                return AuthResult.Fail(FriendlyMessage(e));
+            }
+        }
+}
  
     public readonly struct AuthResult
     {

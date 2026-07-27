@@ -22,18 +22,42 @@ namespace Medtriage.Frontend.UI
         private TaskCatalogEntry entry;
         private Action<TaskCatalogEntry> onSelected;
  
-        public void Setup(TaskCatalogEntry entry, bool isCompleted, Action<TaskCatalogEntry> onSelected)
+public void Setup(TaskCatalogEntry entry, bool isCompleted, bool isAvailable, Action<TaskCatalogEntry> onSelected)
         {
             this.entry = entry;
             this.onSelected = onSelected;
- 
-            if (titleLabel != null) titleLabel.text = entry.DisplayName;
-            if (descriptionLabel != null) descriptionLabel.text = entry.ShortDescription;
-            if (thumbnailImage != null && entry.Thumbnail != null) thumbnailImage.sprite = entry.Thumbnail;
-            if (completedBadge != null) completedBadge.SetActive(isCompleted);
- 
-            startButton.onClick.RemoveAllListeners();
-            startButton.onClick.AddListener(HandleClicked);
+
+            if (titleLabel != null)
+                titleLabel.text = entry.DisplayName;
+
+            if (descriptionLabel != null)
+                descriptionLabel.text = entry.ShortDescription;
+
+            if (thumbnailImage != null)
+            {
+                thumbnailImage.enabled = entry.Thumbnail != null;
+                if (entry.Thumbnail != null)
+                    thumbnailImage.sprite = entry.Thumbnail;
+            }
+
+            if (completedBadge != null)
+                completedBadge.SetActive(isCompleted);
+
+            TMP_Text buttonLabel = startButton != null
+                ? startButton.transform.Find("Text (TMP)")?.GetComponent<TMP_Text>()
+                : null;
+
+            if (buttonLabel != null)
+                buttonLabel.text = isAvailable
+                    ? (isCompleted ? "Train again" : "Start scenario")
+                    : "Awaiting simulation";
+
+            if (startButton != null)
+            {
+                startButton.interactable = isAvailable;
+                startButton.onClick.RemoveAllListeners();
+                startButton.onClick.AddListener(HandleClicked);
+            }
         }
  
         private void HandleClicked() => onSelected?.Invoke(entry);

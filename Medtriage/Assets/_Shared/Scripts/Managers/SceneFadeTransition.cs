@@ -27,7 +27,7 @@ namespace Medtriage.Shared.Managers
             }
  
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(transform.root.gameObject);
  
             canvasGroup = GetComponent<CanvasGroup>();
             canvasGroup.alpha = 0f;
