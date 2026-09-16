@@ -1,0 +1,78 @@
+﻿# Unity .gitignore for medtriage_simulation
+# Ignores Unity cache, intermediate build files, IDE configs, and OS artifacts across all subprojects
+
+# Unity Cache & Generated Folders
+[Ll]ibrary/
+**/[Ll]ibrary/
+[Tt]emp/
+**/[Tt]emp/
+[Oo]bj/
+**/[Oo]bj/
+[Bb]uild/
+**/[Bb]uild/
+[Bb]uilds/
+**/[Bb]uilds/
+[Ll]ogs/
+**/[Ll]ogs/
+[Uu]ser[Ss]ettings/
+**/[Uu]ser[Ss]ettings/
+.utmp/
+**/.utmp/
+.gradle/
+**/.gradle/
+
+# Memory & Captures
+[Mm]emoryCaptures/
+**/[Mm]emoryCaptures/
+[Rr]ecordings/
+**/[Rr]ecordings/
+QuestCaptures/
+**/QuestCaptures/
+
+# Python cache
+__pycache__/
+**/__pycache__/
+*.py[cod]
+
+# Blender backup files
+*.blend1
+*.blend1.meta
+
+# IDE & Editor files
+.vs/
+**/.vs/
+.idea/
+**/.idea/
+.consulo/
+**/.consulo/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.DotSettings.user
+
+# Unity generated meta files for deleted/temporary items
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Crash logs & system reports
+sysinfo.txt
+mono_crash.*
+crashlytics-build.properties
+*.log
+
+# Mobile & Standalone build binaries
+*.apk
+*.aab
+*.app
