@@ -76,3 +76,11 @@ crashlytics-build.properties
 *.apk
 *.aab
 *.app
+
+# Web project artifacts
+node_modules/
+**/node_modules/
+website/node_modules/
+dist/
+**/dist/
+website/dist/
