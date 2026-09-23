@@ -7,10 +7,17 @@ This directory contains the React, TypeScript, and Vite website for the MedTriag
 ## Requirements
 
 - **Git**
+- **Git LFS** — required for the PNG and JPG website assets
 - **Node.js 20 or newer** (verify with `node --version`)
 - **npm** (verify with `npm --version`)
 
 > **Note:** Unity is **not** required to run or build the website. All 3D hospital imagery and clinical assets are pre-rendered into static visual assets.
+
+Before cloning, install Git LFS from [git-lfs.com](https://git-lfs.com/) or through your package manager, then initialize it once:
+
+```bash
+git lfs install
+```
 
 ---
 
@@ -21,18 +28,20 @@ To clone the repository and navigate to the website directory:
 ```bash
 git clone https://github.com/Memucan-ctrl/medtriage_simulation.git
 cd medtriage_simulation/website
+git lfs pull
 ```
 
 ### Working from the feature branch
 
-If you are reviewing or developing on the feature branch before the pull request is merged into the default branch (`main`), clone using the branch-specific command:
+If you are reviewing or developing on the feature branch before the pull request is merged into the active development branch (`simulation`), clone using the branch-specific command:
 
 ```bash
 git clone --branch website/share-local-setup https://github.com/Memucan-ctrl/medtriage_simulation.git
 cd medtriage_simulation/website
+git lfs pull
 ```
 
-*(Note: The branch-specific command is only necessary until the pull request is merged into the default branch).*
+The branch-specific command is only necessary until the pull request is merged.
 
 ---
 
@@ -66,7 +75,7 @@ Once started, open the local URL displayed in the terminal:
 http://localhost:5173/
 ```
 
-*(If port 5173 is already in use by another process, Vite will automatically select the next available port, such as 5174).*
+If port 5173 is already in use, Vite will automatically select the next available port, such as 5174.
 
 ---
 
@@ -103,24 +112,24 @@ Open the local preview URL printed by Vite in your browser to verify the product
 ```text
 website/
 ├── public/
-│   ├── brand/                 # Official brand icons and logos
+│   ├── _Master*.png           # Official brand icons and logos
 │   └── screenshots/           # Static in-engine scene captures used throughout the site
 ├── src/
 │   ├── components/
 │   │   ├── EditorialSite.tsx  # Primary website content and React structure
 │   │   └── editorial.css      # Main website layout and visual styling
-│   ├── App.tsx                # Application entry component rendering the main site
+│   ├── App.tsx                # Application component rendering the main site
 │   ├── index.css              # Global styling tokens and Tailwind directives
 │   └── main.tsx               # React application entry point
-├── dist/                      # Generated production build output (do not edit manually)
-├── index.html                   # HTML shell and metadata
+├── dist/                      # Generated build output; do not edit manually
+├── index.html                 # HTML shell and metadata
 ├── package.json               # Scripts and dependency declarations
 ├── package-lock.json          # Dependency lockfile
 ├── tsconfig.json              # TypeScript compiler configuration
 └── vite.config.ts             # Vite build configuration
 ```
 
-- **`src/App.tsx`**: The application entry component that renders the main website.
+- **`src/App.tsx`**: The application component that renders the main website.
 - **`src/components/EditorialSite.tsx`**: The primary website content, narrative layout, and React component structure.
 - **`src/components/editorial.css`**: The main website layout, typography, animations, and visual styling.
 - **`public/screenshots/`**: Static screenshots and scene renders used throughout the website.
@@ -136,10 +145,11 @@ Production screenshots should be placed inside:
 website/public/screenshots/
 ```
 
-The active in-engine screenshots used by the website:
+The active in-engine screenshots used by the website are:
+
 - `current_cardiac_room.png` — Resuscitation bay and clinical zone layout
 - `current_patient_bed.png` — Virtual patient bedside and monitoring clearance
-- `current_clinical_equipment.png` — Bedside vitals monitor, crash cart, and defibrillator staging
+- `current_clinical_equipment.png` — Bedside monitoring and resuscitation equipment
 - `current_room_detail.png` — Architectural detail, medical wall fixtures, and circulation space
 
 Image references, descriptive alt text, and captions are managed inside:
@@ -148,7 +158,7 @@ Image references, descriptive alt text, and captions are managed inside:
 website/src/components/EditorialSite.tsx
 ```
 
-When adding or replacing screenshots, ensure high-resolution PNG captures are used with clear filenames and meaningful alt text.
+When adding or replacing screenshots, use clear filenames, meaningful alt text, and high-resolution captures. Because images are tracked with Git LFS, run `git lfs status` before committing image changes.
 
 ---
 
@@ -158,7 +168,7 @@ The following scripts are defined in `package.json`:
 
 | Command | Description |
 | :--- | :--- |
-| `npm run dev` | Starts the local Vite development server at `http://localhost:5173/` |
+| `npm run dev` | Starts the local Vite development server, normally at `http://localhost:5173/` |
 | `npm run build` | Runs TypeScript validation (`tsc`) and compiles the production bundle into `dist/` |
 | `npm run preview` | Serves the compiled production bundle locally for preview and QA |
 
@@ -166,34 +176,48 @@ The following scripts are defined in `package.json`:
 
 ## Troubleshooting
 
+### Website images do not display
+
+Make sure Git LFS is installed and download the tracked assets:
+
+```bash
+git lfs install
+git lfs pull
+```
+
 ### Dependencies are missing
-If packages or modules are not found:
+
 ```bash
 npm install
 ```
 
 ### Port 5173 is already occupied
-To explicitly specify an alternative port:
+
 ```bash
 npm run dev -- --port 5174
 ```
 
 ### Clean installation
-If you encounter dependency issues, perform a clean reinstall using the existing lockfile:
-```bash
-# On Windows PowerShell:
+
+Using Windows PowerShell:
+
+```powershell
 Remove-Item -Recurse -Force node_modules
 npm ci
 ```
-*(Do not delete `package-lock.json` as it guarantees consistent package versions).*
+
+Do not delete `package-lock.json`; it keeps dependency versions consistent.
 
 ### Build fails
+
 Verify your Node.js and npm versions:
+
 ```bash
 node --version
 npm --version
 ```
-Ensure you are running **Node.js 20 or newer**.
+
+Use Node.js 20 or newer.
 
 ---
 
