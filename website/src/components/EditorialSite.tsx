@@ -18,6 +18,7 @@ const navigation = [
   { label: 'Simulation', href: '#simulation' },
   { label: 'Assessment', href: '#assessment' },
   { label: 'Technology', href: '#technology' },
+  { label: 'Roadmap', href: '#roadmap' },
   { label: 'Team', href: '#team' },
 ];
 
