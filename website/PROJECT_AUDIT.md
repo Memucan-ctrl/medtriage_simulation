@@ -19,10 +19,8 @@
 ## 2. Healthcare and Educational Problem Addressed
 - **Clinical Training Deficit:** In-hospital cardiac arrest requires rapid, high-stakes decision-making under stress. Traditional manikin-based or lecture training often lacks real-time physiological reactivity, dynamic patient deterioration, and structured team coordination practice.
 - **High-Risk Protocol Failures Addressed:**
-  - Delay in chest compressions or interruptions longer than 10 seconds (
-o_compressions_30s).
-  - Failure to confirm safety clearance ("All Clear") before shock delivery (
-o_clear_call).
+  - Delay in chest compressions or interruptions longer than 10 seconds (no_compressions_30s).
+  - Failure to confirm safety clearance ("All Clear") before shock delivery (no_clear_call).
   - Accidental shock delivery on non-shockable rhythms like Asystole/PEA (shock_non_shockable).
   - Misplacement of diagnostic equipment and delayed rhythm diagnosis.
 - **Supporting Evidence:**
@@ -121,7 +119,7 @@ The confirmed end-to-end user workflow is:
 
 ### Development-Only Tooling (Explicitly Distinguished)
 - com.ivanmurzak.unity.mcp / com.coplaydev.unity-mcp: Model Context Protocol editor connection for automated agentic development.
-- Python Blender asset generator pipeline (uild_B1_defib.py through uild_B9_ivpole_bvm.py).
+- Python Blender asset generator pipeline (`build_B1_defib.py` through `build_B9_ivpole_bvm.py`).
 
 ---
 

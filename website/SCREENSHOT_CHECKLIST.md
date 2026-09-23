@@ -19,7 +19,7 @@
 - **View:** Game View (Maximized) or Scene View with Game View aspect
 - **Target Object:** Full patient on hospital bed with bedside vitals monitor and crash cart in view
 - **Suggested Camera Angle:** Eye-level clinician perspective (35° elevation, 1.8m back from bed)
-- **Target Filename:** edside_patient_overview.png
+- **Target Filename:** bedside_patient_overview.png
 - **Key Details to Show:** Reactive patient model, hospital room architecture, ambient lighting.
 
 ### 2. Pulse Oximeter Finger Attachment (Spotlight)
@@ -59,5 +59,5 @@
 - **View:** Game View with delegation UI active
 - **Target Object:** Radial selection menu showing AttachMonitor, GiveMedication, GetIvAccess, DocumentTime
 - **Suggested Camera Angle:** First-person view with teammate in mid-ground
-- **Target Filename:** 	eam_delegation_radial.png
+- **Target Filename:** team_delegation_radial.png
 - **Key Details to Show:** Available teammate status (Idle / Performing), task icons.

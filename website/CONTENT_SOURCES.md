@@ -31,9 +31,7 @@
 | :--- | :--- | :--- |
 | **5 Score Categories** | Medtriage/Assets/_Shared/Scripts/Data/ScoreCategories.cs | Efficiency, Protocol Adherence, Technical Execution, Team Communication, Decision-Making |
 | **Weighting Formulation** | Medtriage/Assets/_Shared/Data/CardiacArrest01Scenario.asset | Protocol: 30%, Efficiency: 25%, Technical: 20%, Communication: 15%, Decision: 10% |
-| **Critical Safety Errors** | Medtriage/Assets/_Shared/Scripts/Data/CriticalErrorRule.cs | 
-o_compressions_30s, shock_non_shockable, 
-o_clear_call, premature_termination |
+| **Critical Safety Errors** | Medtriage/Assets/_Shared/Scripts/Data/CriticalErrorRule.cs | no_compressions_30s, shock_non_shockable, no_clear_call, premature_termination |
 | **Secure AI Coaching Proxy** | Medtriage/Assets/_Simulation/Scripts/Networking/DebriefCoachingService.cs | Calls backend proxy only; zero keys in Unity client; local fallback included |
 | **Cloud Progress Persistence** | Medtriage/Assets/_Shared/Scripts/Managers/CloudSaveManager.cs | Unity Cloud Save integration |
 

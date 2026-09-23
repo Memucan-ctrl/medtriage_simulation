@@ -45,15 +45,13 @@ To provide a clinical, trustworthy, and interactive presentation of the **MedTri
 ## 4. Visual Direction & Design Tokens
 - **Aesthetic:** Modern, clinical, premium, data-dense yet uncluttered.
 - **Color Palette:**
-  - 
-avy-950: #030712 (Deep Obsidian background)
-  - 
-avy-900: #0a1128 (Surface cards)
-  - 	eal-400: #2dd4bf (Medical telemetry accent)
+  - navy-950: #030712 (Deep Obsidian background)
+  - navy-900: #0a1128 (Surface cards)
+  - teal-400: #2dd4bf (Medical telemetry accent)
   - cyan-400: #22d3ee (XR interaction highlight)
   - emerald-400: #34d399 (Sinus rhythm / normal vitals)
-  - mber-400: #fbbf24 (Warning / Defib charging)
-  - ose-400: #f87171 (Critical error / VFib rhythm)
+  - amber-400: #fbbf24 (Warning / Defib charging)
+  - rose-400: #f87171 (Critical error / VFib rhythm)
 - **Typography:** Inter / Outfit for ultra-clean readability; JetBrains Mono / Space Mono for clinical telemetry values.
 - **Micro-Interactions:** Subtle glows, pulse animations for ECG waveforms, interactive sliders for compression depth/rate demonstration.
 
